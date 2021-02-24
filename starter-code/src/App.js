@@ -1,23 +1,42 @@
 import React from 'react';
 import './App.css';
 import users from "./users";
-import { v4 as uuid } from "uuid";
+import linkedinLogo from "./linkedin.png"
+import { v4 as uuidv4 } from "uuid";
 
 class App extends React.Component {
 
+state = {
+  search: ""
+}
 
-allUsers = () => {
+searchUsers = () => {
   return users.filter( (user) => {
-    return user;
+    let userName = user.firstName + '' + user.lastName;
+
+    return (
+      userName.toLowerCase().includes(this.state.search.toLowerCase())
+    )
   })
+}
+
+changeHandler = event => {
+  const { name } = event.target;
+  const { value } = event.target;
+
+  this.setState({
+      [name]: value
+  });
 }
 
   render() {
     
-    const displayUsers = this.allUsers().map((user) => {
-      //id fehlt noch
+    const displayUsers = this.searchUsers().map((user) => {
+   
+      user.id = uuidv4();
+     
       return (
-        <tr>
+        <tr key={user.id}>
 
           <td>
             {user.firstName}
@@ -36,7 +55,7 @@ allUsers = () => {
           </td>
             
           <td>
-            {user.linkedin}  
+            {user.linkedin ? <a href={user.linkedin}><img style={{width:"20px"}} src={linkedinLogo} alt="linkedin logo"/></a> : ''}
           </td>
 
         </tr>
@@ -44,6 +63,18 @@ allUsers = () => {
     })
     return (
       <div>
+
+        <div>
+          <label> Search By Name </label>
+          <input
+            type="text"
+            name="search"
+            value={this.state.search}
+            onChange={this.changeHandler}
+          />
+        </div>
+
+
         <table>
           <thead>
             <tr>
